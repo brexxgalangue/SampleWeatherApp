@@ -4,6 +4,7 @@ public class Constants {
 
     public static String LOCATION_COUNTRY = "Manila,ph";
     public static String APPID = "f8a33f3fc921e63f232c5974256311f2";
+//    f8a33f3fc921e63f232c5974256311f2
 
     public static String LOC_LAT = "";
     public static String LOC_LON = "";

@@ -7,19 +7,33 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.brex.galangue.sampleweatherapp.R;
+import com.brex.galangue.sampleweatherapp.adapter.WeatherListAdapter;
+import com.brex.galangue.sampleweatherapp.api.JsonParser;
+import com.brex.galangue.sampleweatherapp.api.dto.BeanForecast;
+import com.brex.galangue.sampleweatherapp.api.dto.BeanList;
 import com.brex.galangue.sampleweatherapp.helper.Constants;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.apache.http.HttpEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,38 +82,43 @@ public class SecondPageFragment extends Fragment {
         }
     }
 
+    private ArrayList<BeanList> list_items;
+    private ListView lvWeather;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_second_page, container, false);
         initializeIds(view);
-        try {
-            openForecast();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        list_items =  new ArrayList<>();
+        Log.d("ungLAT", Constants.LOC_LAT);
+        Handler handler =  new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    openForecast();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 1000);
         return view;
     }
 
     private void initializeIds(View view){
-//        imWeatherIcon =  view.findViewById(R.id.imWeatherIcon);
-//        tvTemp =  view.findViewById(R.id.tvTemp);
-//        tvDescription =  view.findViewById(R.id.tvDescription);
-//        tvLocation =  view.findViewById(R.id.tvLocation);
-//        tvSunset =  view.findViewById(R.id.tvSunset);
-//        tvSunsetText =  view.findViewById(R.id.tvSunsetText);
-//        tvSunrise =  view.findViewById(R.id.tvSunrise);
-//        tvSunriseText =  view.findViewById(R.id.tvSunriseText);
+        lvWeather = view.findViewById(R.id.lvWeather);
     }
 
     void openForecast() throws IOException {
 
         OkHttpClient client = new OkHttpClient();
-        Log.d("ungURL_forecast", Constants.BASE_URL_FORECAST);
+        Log.d("ungLAT", Constants.LOC_LAT);
+        Log.d("ungURL_forecast", "http://api.openweathermap.org/data/2.5/forecast?lat="+Constants.LOC_LAT+"&lon="+Constants.LOC_LON+"&q="+Constants.LOCATION_COUNTRY+"&APPID="+Constants.APPID);
 
         Request request = new Request.Builder()
-                .url(Constants.BASE_URL_FORECAST)
+                .url("http://api.openweathermap.org/data/2.5/forecast?lat="+Constants.LOC_LAT+"&lon="+Constants.LOC_LON+"&q="+Constants.LOCATION_COUNTRY+"&APPID="+Constants.APPID)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -115,9 +134,20 @@ public class SecondPageFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
+                            BeanForecast beanForecast = JsonParser.getForecastData(myResponse);
+                            Log.d("beanListssss", String.valueOf(beanForecast.getList().size()));
 
-                            JSONObject json = new JSONObject(myResponse);
-//                            Log.d("val", json.getJSONObject("coord").getString("lat"));
+                            WeatherListAdapter weatherListAdapter =  new WeatherListAdapter(getActivity(), beanForecast.getList());
+                            lvWeather.setAdapter(weatherListAdapter);
+//                            Log.d("secPageVal", json.getJSONObject("city").getString("name"));
+//
+//                            Log.d("listSize", String.valueOf(json.getJSONArray("list").length()));
+//
+//                            for(int i=0; i<json.getJSONArray("list").length();i++){
+//                                JSONObject jsonweather = json.getJSONArray("list").getJSONObject(i);
+//                                Log.d("asdasdasd", jsonweather.getString("dt")+" "+i);
+//                                list_items.add(new BeanList())
+//                            }
 //                            Log.d("CelsiusVal", String.valueOf(convertFahrenheitToCelsius(json.getJSONObject("main").getString("temp"))));
 //                            Constants.LOC_LAT =  json.getJSONObject("coord").getString("lat");
 //                            Constants.LOC_LON =  json.getJSONObject("coord").getString("lon");
@@ -134,7 +164,11 @@ public class SecondPageFragment extends Fragment {
 //                            JSONObject jsonweather = json.getJSONArray("weather").getJSONObject(0);
 //                            tvDescription.setText(jsonweather.getString("description"));
 //                            tvLocation.setText(json.getString("name")+","+String.valueOf(json.getJSONObject("sys").getString("country")));
-                        } catch (JSONException e) {
+
+
+
+
+                        } catch (Exception e) {
                             Log.e("errorRun", e.getMessage());
                             e.printStackTrace();
                         }

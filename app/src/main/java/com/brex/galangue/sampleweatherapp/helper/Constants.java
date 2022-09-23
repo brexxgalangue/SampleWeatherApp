@@ -9,7 +9,6 @@ public class Constants {
     public static String LOC_LON = "";
 
     public static String BASE_URL_WEATHER = "http://api.openweathermap.org/data/2.5/weather?q="+LOCATION_COUNTRY+"&APPID="+APPID;
-    public static String BASE_URL_FORECAST = "http://api.openweathermap.org/data/2.5/forecast?lat="+LOC_LAT+"&lon="+LOC_LON+"&APPID="+APPID;
 
 
 

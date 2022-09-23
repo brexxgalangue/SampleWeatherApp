@@ -7,8 +7,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -130,11 +128,12 @@ public class FirstPageFragment extends Fragment {
 
                             JSONObject json = new JSONObject(myResponse);
                             Log.d("val", json.getJSONObject("coord").getString("lat"));
-                            Log.d("CelsiusVal", String.valueOf(convertFahrenheitToCelsius(json.getJSONObject("main").getString("temp"))));
 
                             Constants.LOC_LAT =  json.getJSONObject("coord").getString("lat");
                             Constants.LOC_LON =  json.getJSONObject("coord").getString("lon");
-                            convertFahrenheitToCelsius(json.getJSONObject("main").getString("temp"));
+                            Log.d("LAT", Constants.LOC_LAT );
+                            Log.d("LON", Constants.LOC_LON );
+
 
                             Log.d("Dateeee_sunrise", getDate(Long.parseLong(json.getJSONObject("sys").getString("sunrise"))));
                             Log.d("Dateeee_sunset", getDate(Long.parseLong(json.getJSONObject("sys").getString("sunset"))));
@@ -143,7 +142,7 @@ public class FirstPageFragment extends Fragment {
                             tvSunsetText.setVisibility(View.VISIBLE);
                             tvSunriseText.setVisibility(View.VISIBLE);
 
-                            tvTemp.setText(String.valueOf(convertFahrenheitToCelsius(json.getJSONObject("main").getString("temp")))+ "\u00B0C");
+                            tvTemp.setText(String.valueOf(AppUtils.convertToCelcius(json.getJSONObject("main").getString("temp")))+ "\u00B0C");
                             JSONObject jsonweather = json.getJSONArray("weather").getJSONObject(0);
                             tvDescription.setText(jsonweather.getString("description"));
                             AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+jsonweather.getString("icon")+".png", imWeatherIcon);
@@ -157,6 +156,8 @@ public class FirstPageFragment extends Fragment {
                     }
                 });
             }
+
+
 
         });
     }
@@ -189,13 +190,6 @@ public class FirstPageFragment extends Fragment {
 //        return null;
 //    }
 
-//    private float convertFahrenheitToCelsius(String fahrenheit) {
-//        return ((Float.valueOf(fahrenheit).floatValue() - 32) * 5 / 9);
-//    }
-
-    private float convertFahrenheitToCelsius(String fahrenheit) {
-        return (Math.round((Float.valueOf(fahrenheit).floatValue() - 275.15)));
-    }
 
 
 

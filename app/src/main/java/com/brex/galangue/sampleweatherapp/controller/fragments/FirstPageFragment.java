@@ -146,7 +146,7 @@ public class FirstPageFragment extends Fragment {
                             tvTemp.setText(String.valueOf(convertFahrenheitToCelsius(json.getJSONObject("main").getString("temp")))+ "\u00B0C");
                             JSONObject jsonweather = json.getJSONArray("weather").getJSONObject(0);
                             tvDescription.setText(jsonweather.getString("description"));
-//                            AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+jsonweather.getString("icon")+".png", imWeatherIcon);
+                            AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+jsonweather.getString("icon")+".png", imWeatherIcon);
 
 
                             tvLocation.setText(json.getString("name")+","+String.valueOf(json.getJSONObject("sys").getString("country")));

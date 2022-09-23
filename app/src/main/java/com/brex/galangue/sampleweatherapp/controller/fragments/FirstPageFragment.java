@@ -162,34 +162,14 @@ public class FirstPageFragment extends Fragment {
         });
     }
 
+
+
     private String getDate(long time) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(time * 1000);
         String date = DateFormat.format("hh:mm aaa", cal).toString();
         return date;
     }
-
-    private void weatherImage(String weatherStatus){
-        if(weatherStatus.equals("Rain")){
-            imWeatherIcon.setImageResource(R.drawable.rainy);
-        }
-    }
-
-//    private String getCountry(String countryCode){
-//        switch (countryCode) {
-//            case "PH":
-//                return "Philippines";
-//            case "UK":
-//                return "United Kingdom";
-//            case "CH":
-//                return "China";
-//
-//            default:
-//                return null;
-//        }
-//        return null;
-//    }
-
 
 
 

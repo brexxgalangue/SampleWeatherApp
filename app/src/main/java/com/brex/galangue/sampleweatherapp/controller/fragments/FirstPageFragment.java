@@ -24,7 +24,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -145,8 +147,9 @@ public class FirstPageFragment extends Fragment {
                             tvTemp.setText(String.valueOf(AppUtils.convertToCelcius(json.getJSONObject("main").getString("temp")))+ "\u00B0C");
                             JSONObject jsonweather = json.getJSONArray("weather").getJSONObject(0);
                             tvDescription.setText(jsonweather.getString("description"));
-                            AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+jsonweather.getString("icon")+".png", imWeatherIcon);
-
+                            checkDate(jsonweather.getString("icon"));
+//                            AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+jsonweather.getString("icon")+".png", imWeatherIcon);
+//
 
                             tvLocation.setText(json.getString("name")+","+String.valueOf(json.getJSONObject("sys").getString("country")));
                         } catch (JSONException e) {
@@ -160,6 +163,35 @@ public class FirstPageFragment extends Fragment {
 
 
         });
+    }
+
+    private void checkDate(String iconVal){
+        try{
+            String dateToday = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(new Date());
+            String timeToday =AppUtils.formatDateTime(dateToday);
+
+            String pattern = "hh:mm aaa";
+            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+            Date timeNow =sdf.parse(timeToday);
+            Date timeSixOclock = sdf.parse("06:00 PM");
+
+
+            if ( timeNow.after(timeSixOclock)){
+                // 01d is sunny icon
+                if(iconVal.equalsIgnoreCase("01d")){
+                    AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+iconVal+".png", imWeatherIcon);
+                }else{
+                    imWeatherIcon.setImageResource(R.drawable.night);
+                }
+            }else{
+                AppUtils.loadImageWithGlide(getActivity(), "http://openweathermap.org/img/w/"+iconVal+".png", imWeatherIcon);
+
+            }
+        }catch (Exception e){
+            Log.e("errorTime", e.getMessage());
+        }
+
     }
 
 
